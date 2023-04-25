@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, PermissionsAndroid } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, PermissionsAndroid, StatusBar } from 'react-native';
 import Geolocation from '@react-native-community/geolocation'
 
 export default function App() {
-  const [location, setLocation] = useState(false);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [error, setError] = useState(null);
 
   const requestLocationPermission = async () => {
     try {
@@ -31,7 +33,7 @@ export default function App() {
     }
   };
 
-  const getLocation = () => {
+  useEffect(() => {
     const result = requestLocationPermission();
     result.then(res => {
       console.log('res is:', res);
@@ -39,32 +41,36 @@ export default function App() {
         Geolocation.getCurrentPosition(
           position => {
             console.log(position);
-            setLocation(position);
+            setLatitude(position.coords.latitude);
+            setLongitude(position.coords.longitude);
+            setError(null);
           },
           error => {
-            // See error code charts below.
             console.log(error.code, error.message);
-            setLocation(false);
+            setError(error.message);
           },
           { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
         );
       }
-    });
-    console.log(location);
-  };
+    })
+  }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Welcome!</Text>
-      <View
-        style={{ marginTop: 10, padding: 10, borderRadius: 10, width: '40%' }}>
-        <Button title="Get Location" onPress={getLocation} />
+      <StatusBar barStyle="light-content" />
+      <View style={styles.titleBar}>
+        <Text style={styles.title}>Galactic Trackers</Text>
       </View>
-      <Text>Latitude: {location ? location.coords.latitude : "unknown"}</Text>
-      <Text>Longitude: {location ? location.coords.latitude : "unknown"}</Text>
-      <View
-        style={{ marginTop: 10, padding: 10, borderRadius: 10, width: '40%' }}>
-        <Button title="Send Location" />
+      <View style={styles.content}>
+        <Text style={styles.locationTitle}>My Location</Text>
+        <View style={styles.locationBox}>
+          <Text style={styles.locationLabel}>Latitude:</Text>
+          <Text style={styles.locationValue}>{latitude}</Text>
+        </View>
+        <View style={styles.locationBox}>
+          <Text style={styles.locationLabel}>Longitude:</Text>
+          <Text style={styles.locationValue}>{longitude}</Text>
+        </View>
       </View>
     </View>
   );
@@ -73,8 +79,59 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#007AFF',
     alignItems: 'center',
+  },
+  titleBar: {
+    height: 60,
+    backgroundColor: '#0057C2',
     justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginHorizontal: 20,
+  },
+  locationContainer: {
+    marginTop: 50,
+    alignItems: 'center',
+  },
+  locationTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  locationBox: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#ccc',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  locationLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  locationValue: {
+    fontSize: 18,
   },
 });
