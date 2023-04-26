@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, StatusBar } from 'react-native';
-// import Geolocation from '@react-native-community/geolocation'
+import { StyleSheet, Text, View, StatusBar, Dimensions } from 'react-native';
 import * as Location from 'expo-location';
+import MapView from 'react-native-maps';
 
 
 export default function App() {
   const [location, setLocation] = useState(null);
-  const [error, setError] = useState(null);
-
-  const LOCATION_TASK_NAME = 'background-location-task';
 
   useEffect(() => {
     (async () => {
@@ -18,7 +15,9 @@ export default function App() {
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Lowest
+      });
       console.log("*****", location)
       setLocation(location);
     })();
@@ -26,12 +25,24 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
       <View style={styles.titleBar}>
         <Text style={styles.title}>Galactic Trackers</Text>
       </View>
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          showsUserLocation={true}
+          followsUserLocation={true}
+          initialRegion={{
+            latitude: 28.396837,
+            longitude: -80.605659,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      </View>
       <View style={styles.content}>
-        <Text style={styles.locationTitle}>My Location</Text>
         <View style={styles.locationBox}>
           <Text style={styles.locationLabel}>Lat:</Text>
           <Text style={styles.locationValue}>{location ? location.coords.latitude : 'unknown'}</Text>
@@ -43,7 +54,7 @@ export default function App() {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -102,4 +113,11 @@ const styles = StyleSheet.create({
   locationValue: {
     fontSize: 18,
   },
+  mapContainer: {
+  },
+  map: {
+    // flex: 1,
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height * 0.6,
+  }
 });
