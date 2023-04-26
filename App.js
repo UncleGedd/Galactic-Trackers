@@ -1,58 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, PermissionsAndroid, StatusBar } from 'react-native';
-import Geolocation from '@react-native-community/geolocation'
+import { StyleSheet, Text, View, StatusBar } from 'react-native';
+// import Geolocation from '@react-native-community/geolocation'
+import * as Location from 'expo-location';
+
 
 export default function App() {
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
+  const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
 
-  const requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Geolocation Permission',
-          message: 'Can we access your location?',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      console.log('granted', granted);
-      if (granted === 'granted') {
-        console.log('You can use Geolocation');
-        return true;
-      } else {
-        console.log('You cannot use Geolocation');
-        return false;
-      }
-    } catch (err) {
-      console.log(err)
-      return false;
-    }
-  };
+  const LOCATION_TASK_NAME = 'background-location-task';
 
   useEffect(() => {
-    const result = requestLocationPermission();
-    result.then(res => {
-      console.log('res is:', res);
-      if (res) {
-        Geolocation.getCurrentPosition(
-          position => {
-            console.log(position);
-            setLatitude(position.coords.latitude);
-            setLongitude(position.coords.longitude);
-            setError(null);
-          },
-          error => {
-            console.log(error.code, error.message);
-            setError(error.message);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-        );
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
       }
-    })
+
+      let location = await Location.getCurrentPositionAsync({});
+      console.log("*****", location)
+      setLocation(location);
+    })();
   }, []);
 
   return (
@@ -64,12 +33,12 @@ export default function App() {
       <View style={styles.content}>
         <Text style={styles.locationTitle}>My Location</Text>
         <View style={styles.locationBox}>
-          <Text style={styles.locationLabel}>Latitude:</Text>
-          <Text style={styles.locationValue}>{latitude}</Text>
+          <Text style={styles.locationLabel}>Lat:</Text>
+          <Text style={styles.locationValue}>{location ? location.coords.latitude : 'unknown'}</Text>
         </View>
         <View style={styles.locationBox}>
-          <Text style={styles.locationLabel}>Longitude:</Text>
-          <Text style={styles.locationValue}>{longitude}</Text>
+          <Text style={styles.locationLabel}>Lon:</Text>
+          <Text style={styles.locationValue}>{location ? location.coords.longitude : 'unknown'}</Text>
         </View>
       </View>
     </View>
@@ -79,12 +48,12 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#007AFF',
     alignItems: 'center',
   },
   titleBar: {
     height: 60,
-    backgroundColor: '#0057C2',
+    marginTop: 25,
+    backgroundColor: '#2D8692',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -97,6 +66,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'stretch',
@@ -120,8 +90,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#ccc',
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
