@@ -14,10 +14,23 @@ export function Home({ route }) {
     const [location, setLocation] = useState(null);
     const [permission, setPermission] = useState(false);
 
-    let firstName, lastName, companyName, phoneNumber
-
+    const firstName = route.params ? route.params.firstName : ''
+    const lastName = route.params ? route.params.lastName : ''
+    const phoneNumber = route.params ? route.params.phoneNumber : ''
+    const companyName = route.params ? route.params.companyName : ''
+    
     const sendLocationData = async () => {
-        if (permission && location) {
+        console.log(JSON.stringify({
+            UUID: userId,
+            Lat: location.coords.latitude,
+            Lon: location.coords.longitude,
+            Alt: location.coords.altitude,
+            FirstName: firstName,
+            LastName: lastName,
+            CompanyName: companyName,
+            PhoneNumber: phoneNumber,
+        }))
+        if (permission && location && false) {
             try {
                 const req = await fetch('http://ec2-3-80-228-237.compute-1.amazonaws.com:5000/add_data', {
                     method: 'POST',
@@ -47,7 +60,6 @@ export function Home({ route }) {
 
     useEffect(() => {
         (async () => {
-            console.log(route ? route : 'no route yet')
             const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 console.log('permission denied!')
@@ -64,7 +76,7 @@ export function Home({ route }) {
             });
             // console.log("*****", location)
             setLocation(location);
-            // sendLocationData()
+            sendLocationData()
         }
     }
     return (

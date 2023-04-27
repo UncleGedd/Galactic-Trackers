@@ -6,11 +6,11 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles.js'
 
-export function Settings() {
+export function Settings({ route }) {
     const navigation = useNavigation();
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    const [firstName, setFirstName] = useState(route.params ? route.params.firstName : '');
+    const [lastName, setLastName] = useState(route.params ? route.params.lastName : '');
+    const [phoneNumber, setPhoneNumber] = useState(route.params ? route.params.phoneNumber : '');
     const [items, setItems] = useState([
         { label: 'SpaceX', value: 'SpaceX' },
         { label: 'ULA', value: 'ULA' },
@@ -19,7 +19,7 @@ export function Settings() {
         { label: 'Other', value: 'Other' },
     ]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [dropdownValue, setDropdownValue] = useState(null);
+    const [dropdownValue, setDropdownValue] = useState(route.params ? route.params.companyName : null);
     const [error, setError] = useState(false)
 
     const handleFirstNameChange = (value) => {
@@ -38,8 +38,8 @@ export function Settings() {
         setPhoneNumber(value);
     };
 
-    const handlePress = () => {
-        if (firstName, lastName, phoneNumber, dropdownValue) {
+    const handleSave = () => {
+        if (firstName && lastName && phoneNumber && dropdownValue) {
             setError(false)
             navigation.navigate('Home', {
                 firstName,
@@ -61,7 +61,12 @@ export function Settings() {
             <View style={styles.container}>
                 <View style={styles.titleBar}>
                     <Text style={styles.title}>User Information</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Home', {
+                        firstName: route.params ? route.params.firstName : firstName,
+                        lastName: route.params ? route.params.lastName : lastName,
+                        phoneNumber: route.params ? route.params.phoneNumber : phoneNumber,
+                        companyName: route.params ? route.params.companyName : dropdownValue
+                    })}>
                         <Ionicons style={styles.settingsIcon} name="map" size={32} color="white" />
                     </TouchableOpacity>
                 </View>
@@ -82,6 +87,7 @@ export function Settings() {
                     />
                     <Text style={styles.label}>Company Name:</Text>
                     <DropDownPicker
+                        onPress={removeKeyboard}
                         open={dropdownOpen}
                         style={styles.input}
                         items={items}
@@ -111,7 +117,7 @@ export function Settings() {
                         placeholder="Enter your phone number"
                         keyboardType="phone-pad"
                     />
-                    <TouchableOpacity style={styles.button} onPress={handlePress}>
+                    <TouchableOpacity style={styles.button} onPress={handleSave}>
                         <Text style={styles.buttonText}>Save</Text>
                     </TouchableOpacity>
                     {
