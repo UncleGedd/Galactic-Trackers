@@ -10,15 +10,18 @@ export const styles = StyleSheet.create({
       height: 60,
       marginTop: 25,
       backgroundColor: '#6aa5c1',
-      justifyContent: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       alignItems: 'center',
-      alignSelf: 'stretch',
+      height: 50,
+      paddingHorizontal: 10,
     },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
       color: '#FFFFFF',
       textAlign: 'center',
+      flex: 1
     },
     content: {
       flex: 1,
@@ -48,5 +51,8 @@ export const styles = StyleSheet.create({
     map: {
       width: Dimensions.get("window").width,
       height: Dimensions.get("window").height * 0.6,
+    },
+    settingsIcon: {
+      marginRight: 5, // added to add some spacing between the title and icon
     }
   });

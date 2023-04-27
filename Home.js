@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StatusBar } from 'react-native';
+import { Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import MapView from 'react-native-maps';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles.js'
 
 const userId = '_' + Math.random().toString(36).substr(2, 9)
 
 export function Home() {
+    const navigation = useNavigation();
+
     const [location, setLocation] = useState(null);
     const [permission, setPermission] = useState(false);
 
@@ -61,6 +65,9 @@ export function Home() {
             <StatusBar barStyle="dark-content" />
             <View style={styles.titleBar}>
                 <Text style={styles.title}>Galactic Trackers</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Menu')}>
+                    <Ionicons style={styles.settingsIcon} name="settings" size={32} color="white" />
+                </TouchableOpacity>
             </View>
             <View>
                 <MapView
