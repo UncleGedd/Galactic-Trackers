@@ -8,11 +8,13 @@ import { styles } from './styles.js'
 
 const userId = '_' + Math.random().toString(36).substr(2, 9)
 
-export function Home() {
+export function Home({ route }) {
     const navigation = useNavigation();
 
     const [location, setLocation] = useState(null);
     const [permission, setPermission] = useState(false);
+
+    let firstName, lastName, companyName, phoneNumber
 
     const sendLocationData = async () => {
         if (permission && location) {
@@ -29,6 +31,10 @@ export function Home() {
                         Lat: location.coords.latitude,
                         Lon: location.coords.longitude,
                         Alt: location.coords.altitude,
+                        FirstName: firstName,
+                        LastName: lastName,
+                        CompanyName: companyName,
+                        PhoneNumber: phoneNumber,
                     }),
                 });
                 const res = await req
@@ -41,6 +47,7 @@ export function Home() {
 
     useEffect(() => {
         (async () => {
+            console.log(route ? route : 'no route yet')
             const { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 console.log('permission denied!')
@@ -55,7 +62,7 @@ export function Home() {
         if (permission) {
             let location = await Location.getCurrentPositionAsync({
             });
-            console.log("*****", location)
+            // console.log("*****", location)
             setLocation(location);
             // sendLocationData()
         }
@@ -65,8 +72,13 @@ export function Home() {
             <StatusBar barStyle="dark-content" />
             <View style={styles.titleBar}>
                 <Text style={styles.title}>Galactic Trackers</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-                    <Ionicons style={styles.settingsIcon} name="settings" size={32} color="white" />
+                <TouchableOpacity onPress={() => navigation.navigate('Settings', {
+                    firstName,
+                    lastName,
+                    phoneNumber,
+                    companyName
+                })}>
+                    <Ionicons style={styles.settingsIcon} name="person-circle-outline" size={32} color="white" />
                 </TouchableOpacity>
             </View>
             <View>

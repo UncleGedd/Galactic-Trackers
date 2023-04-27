@@ -81,5 +81,26 @@ export const styles = StyleSheet.create({
   lightLabel: {
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  button: {
+    backgroundColor: '#f9a05c',
+    color: 'white',
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 20,
+    marginLeft: 50,
+    marginRight: 50
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  errorText: {
+    fontSize: 12,
+    marginTop: 10,
+    fontWeight: 'bold',
+    textAlign: 'center',
+
   }
 });
