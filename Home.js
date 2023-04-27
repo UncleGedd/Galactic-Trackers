@@ -65,7 +65,7 @@ export function Home() {
             <StatusBar barStyle="dark-content" />
             <View style={styles.titleBar}>
                 <Text style={styles.title}>Galactic Trackers</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Menu')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
                     <Ionicons style={styles.settingsIcon} name="settings" size={32} color="white" />
                 </TouchableOpacity>
             </View>
