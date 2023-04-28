@@ -10,8 +10,8 @@ npm-debug.*
 *.orig.*
 web-build/
 
-# react-native-config
 .env
+.envrc
 
 # macOS
 .DS_Store

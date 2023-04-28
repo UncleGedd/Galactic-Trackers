@@ -5,12 +5,12 @@ import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles.js'
-import Config from "react-native-config";
 
 const userId = '_' + Math.random().toString(36).substr(2, 9)
 
 export function Home({ route }) {
     const navigation = useNavigation();
+
 
     const [location, setLocation] = useState(null);
     const [permission, setPermission] = useState(false);
@@ -21,16 +21,6 @@ export function Home({ route }) {
     const companyName = route.params ? route.params.companyName : ''
 
     const sendLocationData = async () => {
-        console.log(JSON.stringify({
-            UUID: userId,
-            Lat: location ? location.coords.latitude : '',
-            Lon: location ? location.coords.longitude : '',
-            Alt: location ? location.coords.altitude : '',
-            FirstName: firstName,
-            LastName: lastName,
-            CompanyName: companyName,
-            PhoneNumber: phoneNumber,
-        }))
         if (permission && location) {
             try {
                 const req = await fetch('http://ec2-3-80-228-237.compute-1.amazonaws.com:5000/add_data', {
@@ -38,7 +28,7 @@ export function Home({ route }) {
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + Config.API_KEY
+                        'Authorization': 'Bearer ' + process.env.API_KEY
                     },
                     body: JSON.stringify({
                         UUID: userId,
@@ -52,7 +42,7 @@ export function Home({ route }) {
                     }),
                 });
                 const res = await req
-                console.log("res", JSON.stringify(res))
+                console.log('Request sent, status:', res.status)
             } catch (err) {
                 console.log(err)
             }
@@ -75,7 +65,7 @@ export function Home({ route }) {
         if (permission) {
             let location = await Location.getCurrentPositionAsync({
             });
-            // console.log("*****", location)
+            console.log('Location updated!', 'Lat:', location.coords.latitude, 'Lon:', location.coords.longitude)
             setLocation(location);
             sendLocationData()
         }
