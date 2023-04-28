@@ -5,6 +5,7 @@ import MapView from 'react-native-maps';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { styles } from './styles.js'
+import Config from "react-native-config";
 
 const userId = '_' + Math.random().toString(36).substr(2, 9)
 
@@ -18,7 +19,7 @@ export function Home({ route }) {
     const lastName = route.params ? route.params.lastName : ''
     const phoneNumber = route.params ? route.params.phoneNumber : ''
     const companyName = route.params ? route.params.companyName : ''
-    
+
     const sendLocationData = async () => {
         console.log(JSON.stringify({
             UUID: userId,
@@ -30,14 +31,14 @@ export function Home({ route }) {
             CompanyName: companyName,
             PhoneNumber: phoneNumber,
         }))
-        if (permission && location && false) {
+        if (permission && location) {
             try {
                 const req = await fetch('http://ec2-3-80-228-237.compute-1.amazonaws.com:5000/add_data', {
                     method: 'POST',
                     headers: {
                         Accept: 'application/json',
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer 6YnMCAAbADcWYMwGZvzIBGNsXt0FtBFlAPkfX2db7cHz2ni9bc'
+                        'Authorization': 'Bearer ' + Config.API_KEY
                     },
                     body: JSON.stringify({
                         UUID: userId,
