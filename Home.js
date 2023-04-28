@@ -23,9 +23,9 @@ export function Home({ route }) {
     const sendLocationData = async () => {
         console.log(JSON.stringify({
             UUID: userId,
-            Lat: location.coords.latitude,
-            Lon: location.coords.longitude,
-            Alt: location.coords.altitude,
+            Lat: location ? location.coords.latitude : '',
+            Lon: location ? location.coords.longitude : '',
+            Alt: location ? location.coords.altitude : '',
             FirstName: firstName,
             LastName: lastName,
             CompanyName: companyName,
@@ -42,9 +42,9 @@ export function Home({ route }) {
                     },
                     body: JSON.stringify({
                         UUID: userId,
-                        Lat: location.coords.latitude,
-                        Lon: location.coords.longitude,
-                        Alt: location.coords.altitude,
+                        Lat: location ? location.coords.latitude : '',
+                        Lon: location ? location.coords.longitude : '',
+                        Alt: location ? location.coords.altitude : '',
                         FirstName: firstName,
                         LastName: lastName,
                         CompanyName: companyName,
